@@ -1,0 +1,22 @@
+import sys
+
+from django.core.exceptions import ObjectDoesNotExist
+import numpy as np
+from . import utils
+from upload.models import RTGeneralPlan
+
+
+def parse(dcm, user, patient, study, series):
+    try:
+        generalPlan = RTGeneralPlan.objects.get(SOPInstanceUID=dcm.SOPInstanceUID)
+    except ObjectDoesNotExist:
+        generalPlan = RTGeneralPlan()
+        generalPlan.planLabel = dcm.RTPlanLabel
+
+    try:
+        generalPlan.save()
+    except:
+        print(sys.exc_info())
+        return False
+
+    return True

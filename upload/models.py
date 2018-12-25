@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
 import dicom
+
 # Create your models here.
 class Patient(models.Model):
     class Meta:
@@ -12,7 +13,7 @@ class Patient(models.Model):
     BirthDate = models.DateField(null=True)
     Gender = models.CharField(max_length=20,null=True)
     EnthicGroup = models.CharField(max_length=200,null=True)
-    fk_user_id = models.ForeignKey(User)
+    fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Study(models.Model):
     class Meta:
@@ -21,8 +22,8 @@ class Study(models.Model):
     StudyDate = models.DateField(null=True)
     StudyDescription = models.CharField(max_length=200,null=True)
     TotalSeries = models.IntegerField()
-    fk_patient_id = models.ForeignKey(Patient)
-    fk_user_id = models.ForeignKey(User)
+    fk_patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Series(models.Model):
     class Meta:
@@ -35,9 +36,9 @@ class Series(models.Model):
     SeriesNumber = models.CharField(max_length=100,null=True)
     PhysicianOfRecord = models.CharField(max_length=100,null=True)
     Manufacturer = models.CharField(max_length=50,null=True)
-    fk_study_id = models.ForeignKey(Study)
-    fk_patient_id = models.ForeignKey(Patient)
-    fk_user_id = models.ForeignKey(User)
+    fk_study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
+    fk_patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class CTImages(models.Model):
     class Meta:
@@ -56,10 +57,10 @@ class CTImages(models.Model):
     BodypartExamined = models.CharField(max_length=100,null=True)
     Rows = models.IntegerField()
     Columns = models.IntegerField()
-    fk_series_id = models.ForeignKey(Series)
-    fk_study_id = models.ForeignKey(Study)
-    fk_patient_id = models.ForeignKey(Patient)
-    fk_user_id = models.ForeignKey(User)
+    fk_series_id = models.ForeignKey(Series, on_delete=models.CASCADE)
+    fk_study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
+    fk_patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class RTStructureSet(models.Model):
     class Meta:
@@ -67,34 +68,29 @@ class RTStructureSet(models.Model):
     SOPInstanceUID = models.CharField(max_length=200)
     SOPClassUID = models.CharField(max_length=100)
     TotalROIs = models.IntegerField()
-    fk_series_id = models.ForeignKey(Series)
-    fk_study_id = models.ForeignKey(Study)
-    fk_patient_id = models.ForeignKey(Patient)
-    fk_user_id = models.ForeignKey(User)
+    fk_series_id = models.ForeignKey(Series, on_delete=models.CASCADE)
+    fk_study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
+    fk_patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class ROI(models.Model):
     class Meta:
         db_table = 'oar_dictionary'
-
     ROIName = models.CharField(max_length=100,unique=True)
     ROIDisplayColor = models.CharField(max_length=100)
 
 class RTROI(models.Model):
     class Meta:
         db_table = 'rt_rois'
-
-
     ROIName = models.CharField(max_length=100)
     Volume = models.FloatField()
     TotalContours = models.IntegerField()
     ROINumber = models.CharField(max_length=200,null=True)
-    fk_structureset_id = models.ForeignKey(RTStructureSet)
-    fk_series_id = models.ForeignKey(Series)
-    fk_study_id = models.ForeignKey(Study)
-    fk_patient_id = models.ForeignKey(Patient)
-    fk_user_id = models.ForeignKey(User)
-
-
+    fk_structureset_id = models.ForeignKey(RTStructureSet, on_delete=models.CASCADE)
+    fk_series_id = models.ForeignKey(Series, on_delete=models.CASCADE)
+    fk_study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
+    fk_patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class RTContour(models.Model):
     class Meta:
@@ -104,8 +100,8 @@ class RTContour(models.Model):
     ContourData = models.TextField()
     ReferencedSOPClassUID = models.CharField(max_length=100)
     ReferencedSOPInstanceUID = models.CharField(max_length=100)
-    fk_roi_id = models.ForeignKey(RTROI)
-    fk_structureset_id = models.ForeignKey(RTStructureSet)
+    fk_roi_id = models.ForeignKey(RTROI, on_delete=models.CASCADE)
+    fk_structureset_id = models.ForeignKey(RTStructureSet, on_delete=models.CASCADE)
 
 class RTDose(models.Model):
     class Meta:
@@ -118,10 +114,10 @@ class RTDose(models.Model):
     DoseUnits = models.CharField(max_length=100,null=True)
     ReferencedRTPlanSequence = models.CharField(max_length=100)
     ReferencedStructureSetSequence = models.CharField(max_length=100)
-    fk_series_id = models.ForeignKey(Series)
-    fk_study_id = models.ForeignKey(Study)
-    fk_patient_id = models.ForeignKey(Patient)
-    fk_user_id = models.ForeignKey(User)
+    fk_series_id = models.ForeignKey(Series, on_delete=models.CASCADE)
+    fk_study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
+    fk_patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class RTDoseImage(models.Model):
     class Meta:
@@ -134,11 +130,11 @@ class RTDoseImage(models.Model):
     PixelSpacing = models.CharField(max_length=20)
     NumberOfFrames = models.IntegerField()
     ImageData = models.TextField()
-    fk_dose_id = models.ForeignKey(RTDose)
-    fk_series_id = models.ForeignKey(Series)
-    fk_study_id = models.ForeignKey(Study)
-    fk_patient_id = models.ForeignKey(Patient)
-    fk_user_id = models.ForeignKey(User)
+    fk_dose_id = models.ForeignKey(RTDose, on_delete=models.CASCADE)
+    fk_series_id = models.ForeignKey(Series, on_delete=models.CASCADE)
+    fk_study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
+    fk_patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class RTDVH(models.Model):
     class Meta:
@@ -154,11 +150,11 @@ class RTDVH(models.Model):
     DoseType = models.CharField(max_length=10)
     DoseUnits = models.CharField(max_length=10)
     DVHData = models.TextField()
-    fk_dose_id = models.ForeignKey(RTDose)
-    fk_series_id = models.ForeignKey(Series)
-    fk_study_id = models.ForeignKey(Study)
-    fk_patient_id = models.ForeignKey(Patient)
-    fk_user_id = models.ForeignKey(User)
+    fk_dose_id = models.ForeignKey(RTDose, on_delete=models.CASCADE)
+    fk_series_id = models.ForeignKey(Series, on_delete=models.CASCADE)
+    fk_study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
+    fk_patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    fk_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class RTIsDose(models.Model):
@@ -168,13 +164,18 @@ class RTIsDose(models.Model):
     RowPosition = models.TextField()
     ColumnPosition = models.TextField()
     IsDoseValue = models.IntegerField()
-    fk_ct_image_id = models.ForeignKey(CTImages)
-    fk_dose_id = models.ForeignKey(RTDose)
-    fk_series_id = models.ForeignKey(Series)
-    fk_study_id = models.ForeignKey(Study)
-    fk_patient_id = models.ForeignKey(Patient)
+    fk_ct_image_id = models.ForeignKey(CTImages, on_delete=models.CASCADE)
+    fk_dose_id = models.ForeignKey(RTDose, on_delete=models.CASCADE)
+    fk_series_id = models.ForeignKey(Series, on_delete=models.CASCADE)
+    fk_study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
+    fk_patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
 
-
+class RTGeneralPlan(models.Model):
+    class Meta:
+        db_table = 'rt_general_plan'
+    planLabel = models.TextField()
+    planName = models.TextField(null=True)    
+        
 class OVH(models.Model):
     class Meta:
         db_table = 'ovh'
@@ -185,7 +186,7 @@ class OVH(models.Model):
     #to specify the ptv_id and oar_id for ovh
     ptv_id = models.IntegerField(null=True)
     OAR_id = models.IntegerField(null=True)
-    fk_study_id = models.ForeignKey(Study)
+    fk_study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
 
 
 #a Model to store sts
@@ -200,15 +201,14 @@ class STS(models.Model):
     #to specify which ptv and which oar
     ptv_id = models.IntegerField(null=True)
     OAR_id = models.IntegerField(null=True)
-    fk_study_id = models.ForeignKey(Study)
+    fk_study_id = models.ForeignKey(Study, on_delete=models.CASCADE)
 
 class Similarity(models.Model):
     class Meta:
         db_table = 'similarity'
-
     DBStudyID = models.CharField(max_length=100)
     Similarity = models.FloatField(max_length=200)
     OVHDisimilarity = models.FloatField(max_length=200)
     STSDisimilarity = models.FloatField(max_length=200)
     TargetOAR = models.CharField(max_length=200)
-    fk_study_id = models.ForeignKey(Study)
+    fk_study_id = models.ForeignKey(Study, on_delete=models.CASCADE)

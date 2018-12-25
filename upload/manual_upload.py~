@@ -1,0 +1,5 @@
+
+
+filename = input("Enter the dcm filename")
+user_id = input("Enter the user_id")
+patientName = input("Enter the patient name")

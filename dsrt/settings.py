@@ -33,7 +33,7 @@ SECRET_KEY = 't(p=3!2#d236!gmafl839x_ca$dyz@c!d1x%tq9tpqytl&xcl#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['68.181.174.158', 'egg120-9.usc.edu']
+ALLOWED_HOSTS = ['68.181.174.158', 'egg120-9.usc.edu', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -64,7 +64,7 @@ ROOT_URLCONF = 'dsrt.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['/home/ipilab/dsrt/dsrt/templates/'],
+        'DIRS': [os.path.join(BASE_DIR, 'dsrt/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -86,8 +86,11 @@ WSGI_APPLICATION = 'dsrt.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'rtds',
+        'USER': 'rsmith',
+        'PASSWORD': 'liverkinaseb1',
         'OPTIONS': {
-		'read_default_file': '/etc/mysql/my.cnf',
+	    'read_default_file': '/etc/mysql/my.cnf',
 	},
     }
 }

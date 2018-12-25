@@ -2,19 +2,19 @@ import sys
 
 from django.core.exceptions import ObjectDoesNotExist
 import numpy as np
-import utils
+from . import utils
 from upload.models import RTROI, RTContour
 from upload.models import RTStructureSet
 
 
-def parse(dicom_dataframe,user,patient,study,series):
+def parse(dcm,user,patient,study,series):
     try:
-        structure_set = RTStructureSet.objects.get(SOPInstanceUID=dicom_dataframe.SOPInstanceUID)
+        structure_set = RTStructureSet.objects.get(SOPInstanceUID=dcm.SOPInstanceUID)
     except ObjectDoesNotExist:
         structure_set = RTStructureSet()
-        structure_set.SOPInstanceUID = dicom_dataframe.SOPInstanceUID
-        structure_set.SOPClassUID = dicom_dataframe.SOPClassUID
-        structure_set.TotalROIs = utils.count_rois(dicom_dataframe)
+        structure_set.SOPInstanceUID = dcm.SOPInstanceUID
+        structure_set.SOPClassUID = dcm.SOPClassUID
+        structure_set.TotalROIs = utils.count_rois(dcm)
         structure_set.fk_series_id = series
         structure_set.fk_study_id = study
         structure_set.fk_patient_id = patient
@@ -23,8 +23,8 @@ def parse(dicom_dataframe,user,patient,study,series):
 
 
     # parse the ROI sequence
-    roi_sequence = dicom_dataframe.ROIContourSequence
-    roi_label_sequence = dicom_dataframe.StructureSetROISequence
+    roi_sequence = dcm.ROIContourSequence
+    roi_label_sequence = dcm.StructureSetROISequence
 
     for roi in roi_sequence:
         try:

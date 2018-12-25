@@ -1,24 +1,24 @@
 from django.core.exceptions import ObjectDoesNotExist
 
-import utils
+from . import utils
 from upload.models import RTDVH
 from upload.models import RTDose
 from upload.models import RTDoseImage
 
 
-def parse(dataframe,user,patient,study,series):
+def parse(dcm,user,patient,study,series):
     try:
-        dose = RTDose.objects.get(SOPInstanceUID=dataframe.SOPInstanceUID)
+        dose = RTDose.objects.get(SOPInstanceUID=dcm.SOPInstanceUID)
     except ObjectDoesNotExist:
         dose = RTDose()
-        dose.SOPInstanceUID = dataframe.SOPInstanceUID
-        dose.SOPClassUID = dataframe.SOPClassUID
-        dose.DoseGridScaling = dataframe.DoseGridScaling
-        dose.DoseSummationType = dataframe.DoseSummationType
-        dose.DoseType = dataframe.DoseType
-        dose.DoseUnits = dataframe.DoseUnits
-        dose.ReferencedRTPlanSequence = dataframe.ReferencedRTPlanSequence
-        dose.ReferencedStructureSetSequence = dataframe.ReferencedStructureSetSequence
+        dose.SOPInstanceUID = dcm.SOPInstanceUID
+        dose.SOPClassUID = dcm.SOPClassUID
+        dose.DoseGridScaling = dcm.DoseGridScaling
+        dose.DoseSummationType = dcm.DoseSummationType
+        dose.DoseType = dcm.DoseType
+        dose.DoseUnits = dcm.DoseUnits
+        dose.ReferencedRTPlanSequence = dcm.ReferencedRTPlanSequence
+        dose.ReferencedStructureSetSequence = dcm.ReferencedStructureSetSequence
         dose.fk_user_id = user
         dose.fk_patient_id = patient
         dose.fk_study_id = study
@@ -29,14 +29,14 @@ def parse(dataframe,user,patient,study,series):
         doseImage = RTDoseImage.objects.get(fk_dose_id = dose)
     except ObjectDoesNotExist:
         doseImage = RTDoseImage()
-        doseImage.Columns = dataframe.Columns
-        doseImage.Rows = dataframe.Rows
-        doseImage.ImageOrientationPatient = dataframe.ImageOrientationPatient
-        doseImage.ImagePositionPatient = dataframe.ImagePositionPatient
-        doseImage.PhotometricInterpretation = dataframe.PhotometricInterpretation
-        doseImage.PixelSpacing = dataframe.PixelSpacing
-        doseImage.NumberOfFrames = int(dataframe.NumberOfFrames)
-        doseImage.ImageData = dataframe.pixel_array
+        doseImage.Columns = dcm.Columns
+        doseImage.Rows = dcm.Rows
+        doseImage.ImageOrientationPatient = dcm.ImageOrientationPatient
+        doseImage.ImagePositionPatient = dcm.ImagePositionPatient
+        doseImage.PhotometricInterpretation = dcm.PhotometricInterpretation
+        doseImage.PixelSpacing = dcm.PixelSpacing
+        doseImage.NumberOfFrames = int(dcm.NumberOfFrames)
+        doseImage.ImageData = dcm.pixel_array
         doseImage.fk_user_id = user
         doseImage.fk_patient_id = patient
         doseImage.fk_study_id = study
@@ -45,7 +45,7 @@ def parse(dataframe,user,patient,study,series):
         doseImage.save()
 
     #DVH information is under this tag
-    dvhSequence = dataframe.DVHSequence
+    dvhSequence = dcm.DVHSequence
     for item in dvhSequence:
         #create a dvh for each ROI
         referencedROI = item.DVHReferencedROISequence[0].ReferencedROINumber
@@ -70,4 +70,4 @@ def parse(dataframe,user,patient,study,series):
             dvh.fk_dose_id = dose
             dvh.save()
 
-    IsdoseSequence = utils.getIsodose(dataframe)
+    IsdoseSequence = utils.getIsodose(dcm)
